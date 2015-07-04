@@ -121,7 +121,6 @@ def main():
         dic_list = open(filename)
         print('Total Count of Records: ' + str(sum(1 for _ in dic_list)))
         dic_list.close()
-        # dic_list = open(filename)
         db_config = read_db_config()
         conn = MySQLConnection(**db_config)
         cursor = conn.cursor()
