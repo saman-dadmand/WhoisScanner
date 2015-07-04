@@ -1,0 +1,27 @@
+[mysql]
+host = # mysql server
+database = # databse name
+user = #user
+password = #password
+port=3306
+[general]
+default_list_name =lst_4l_ir #default search for auto search enabled
+ip_refresh_second = 900
+auto_start_search=True  #lanuch auto search in startup
+public_ip_ref=http://myexternalip.com/json
+[telnet]
+telnet_timeout = 10
+[search]
+delay_second = 1
+try_count = 25
+mid_sleep_record = 20
+mid_sleep_time = 20
+block_counter_out = 50
+buffer=10
+[email]
+server= #smtp mailserver
+port=25
+user = #smtp server user
+password = #smtp server password
+notify = #alert for blockout mail address
+sender= # smtp sender name
