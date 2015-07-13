@@ -27,7 +27,7 @@ def db_select(query):
         except Exception:
             db_reconnect2_status = 0
             while 0 == db_reconnect2_status:
-                print('Reconnecting Database...')
+                print('Reconnecting Database...'+'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now(), end='\r'))
                 try:
                     db_config = read_db_config()
                     conn = MySQLConnection(**db_config)
@@ -52,7 +52,7 @@ def db_update(query):
         except Exception:
             db_reconnect2_status = 0
             while 0 == db_reconnect2_status:
-                print('Reconnecting Database...')
+                print('Reconnecting Database...'+'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now(), end='\r'))
                 try:
                     db_config = read_db_config()
                     conn = MySQLConnection(**db_config)
@@ -71,14 +71,14 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
         telnet_result)
 
     if search_result:  # Find Site Available For Normal Register
-        print(str(todo_result[to_do_line][0]) + " : Site is not registered --> ", look_for)
+        print(str(todo_result[to_do_line][0]) + " : Site is not registered --> ", look_for, end='\r')
         # update table query
         return_update_query = "update %s set Status='Site is not registered' ,lockedby=null ,Hostname='%s' " \
                               "where  No=%s " % (selected_list, socket.gethostname(), todo_result[to_do_line][0])
         db_update(return_update_query)
 
     elif search_special:  # Find Site Available For Special Register
-        print(str(todo_result[to_do_line][0]) + " : Special registration--> ", look_for)
+        print(str(todo_result[to_do_line][0]) + " : Special registration--> ", look_for, end='\r')
         # update Query
         return_update_query = "update %s set Status='Special registration',lockedby=null ,Hostname='%s' " \
                               "where  No=%s " % (selected_list,socket.gethostname(), todo_result[to_do_line][0])
@@ -100,7 +100,7 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
             # update Query
             print(str(todo_result[to_do_line][0]), ': Site registered -->', looking_for, 'Email:',
                   email.group(2),
-                  person_name + ' ' + phone_number)
+                  person_name + ' ' + phone_number, end='\r')
             return_update_query = "update %s set Status='Site registered',Email='%s'" \
                                   ",phone='%s',person='%s',lockedby=null ,Hostname='%s' where  No=%s " % \
                                   (selected_list, email.group(2), phone_number,
@@ -110,14 +110,14 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
         else:
             if search_unregable:
                 # update Query
-                print(str(todo_result[to_do_line][0]), ': Unregistrable-->', look_for)
+                print(str(todo_result[to_do_line][0]), ': Unregistrable-->', look_for, end='\r')
                 return_update_query = "update %s set Status='Unregistrable',lockedby=null ,Hostname='%s' " \
                                       "where  No=%s " % (selected_list,socket.gethostname(), todo_result[to_do_line][0])
                 db_update(return_update_query)
             else:
                 # update Query
                 print(str(todo_result[to_do_line][0]), ': Site registered No Email-->', look_for, 'Email:',
-                      'Cannot retrieve email address!')
+                      'Cannot retrieve email address!', end='\r')
                 return_update_query = "update %s set Status='Registered No Email',lockedby=null ,Hostname='%s' " \
                                       "where  No=%s " % (selected_list, socket.gethostname(), todo_result[to_do_line][0])
                 db_update(return_update_query)
@@ -140,7 +140,7 @@ def block_out(ip_address):
 
     else:
         while internet_status() is False:
-            print('Connection is lost!,Check your internet connection! Try:', ip_research_counter +
+            print('Connection is lost!,Check your internet connection! Try:', ip_research_counter,
                   ' second {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
             sleep(int(config_section_map("general")['ip_refresh_second']))
             ip_research_counter += 1
@@ -233,7 +233,7 @@ def main():
                             telnet_result = str(telnet_connect.read_all())
 
                             if telnet_result == "b''":
-                                print(str(todo_result[to_do_line][0]) + ' : Passed --> ' + looking_for)
+                                print(str(todo_result[to_do_line][0]) + ' : Passed --> ' + looking_for, end='\r')
                                 return_update_query = "update %s set Status='Passed',lockedby=null ,Hostname='%s' " \
                                                       "where  No=%s " \
                                                       % (selected_list,socket.gethostname(), todo_result[to_do_line][0])
@@ -246,7 +246,7 @@ def main():
 
                         except Exception:
                             passed_counter += 1
-                            print('Telnet exception Passed -->', str(look_for), 'Count', passed_counter)
+                            print('Telnet exception Passed -->', str(look_for), 'Count', passed_counter, end='\r')
                             winsound.Beep(9000, 300)
                             return_update_query = "update %s set Status='Passed',lockedby=null ,Hostname='%s' " \
                                                   "where  No=%s " \
@@ -254,7 +254,7 @@ def main():
                             db_update(return_update_query)
                             if passed_counter >= int(config_section_map("search")['block_counter_out']):
                                 ip_address = public_ip()
-                                mail_sender(socket.gethostname())
+                                mail_sender(socket.gethostname(), 'Blocked')
                                 block_out(ip_address)
         else:
             print('All record are processed for ' + selected_list + ' list!')
