@@ -5,8 +5,6 @@ from re import findall
 from smtplib import SMTP
 import datetime
 
-#from cryptography.fernet import Fernet
-
 Config = ConfigParser()
 Config.read("config.ini")
 Config.sections()
@@ -64,7 +62,7 @@ def internet_status():
     except Exception:
         return False
 
-def mail_sender(hostname):
+def mail_sender(hostname, event):
     try:
         debuglevel = 0
         smtp = SMTP()
@@ -78,7 +76,7 @@ def mail_sender(hostname):
         subj = "Whois Scanner Blocked!"
         date = datetime.datetime.now().strftime( "%d/%m/%Y %H:%M" )
 
-        message_text = "Hello\nThe [%s] hostname is blocked at %s \n\nBye\n" % (hostname, date)
+        message_text = "Hello\nMessage from [%s] hostname: The %s event occurred at %s \n\nBye\n" % (hostname,event, date)
 
         msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % (from_addr, to_addr, subj, date, message_text)
 
