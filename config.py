@@ -43,10 +43,11 @@ def read_db_config(filename='config.ini', section='mysql'):
 def public_ip():
     ip = {}
     try:
-        print('Checking Public IP Address...')
+        print('Checking Public IP Address...',end='\r')
         with urllib.request.urlopen(config_section_map("general")['public_ip_ref']) as ext_ip:
             ip = findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})',
                          str(ext_ip.read()))
+            print('Public IP Address:'+str(ip))
     except Exception:
         ip = None
 
@@ -55,9 +56,9 @@ def public_ip():
 
 def internet_status():
     try:
-        print('Checking internet connection...')
+        print('Checking internet connection...',end='\r')
         response = urllib.request.urlopen('https://www.google.com')
-        print('Connected')
+        print('Checking internet connection:'+'Connected!')
         return True
     except Exception:
         return False

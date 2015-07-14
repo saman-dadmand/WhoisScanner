@@ -7,5 +7,5 @@ setup(name='WhoisScanner',
       author='Saman Dadmand',
       author_email='saman.dadmand@gmail.com',
       console=["ListMain.py"],
-      requires=['tabulate', 'mysql', 'cryptography']
+      requires=['tabulate', 'mysql', 'cryptography', 'colorama', 'colorama']
       )
