@@ -49,7 +49,8 @@ def public_ip():
                          str(ext_ip.read()))
             print('Public IP Address:'+str(ip))
     except Exception:
-        ip = None
+        print('Checking Public IP Address:Failed')
+        ip = 'None'
 
     return ip
 
@@ -58,7 +59,7 @@ def internet_status():
     try:
         print('Checking internet connection...',end='\r')
         response = urllib.request.urlopen('https://www.google.com')
-        print('Checking internet connection:'+'Connected!')
+        print('Internet Connected!             ')
         return True
     except Exception:
         return False

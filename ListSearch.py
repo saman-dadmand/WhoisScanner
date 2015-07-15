@@ -72,6 +72,8 @@ def db_update(query):
 
 
 def monitoring(hostname, status, ip):
+    if ip=='None':
+        ip="'None'"
     query = "insert into  monitoring (hostname,status,PublicIP) " \
             "values ('%s','%s',%s)" % (hostname, status, str(ip.strip('[]')))
     db_update(query)
@@ -112,9 +114,7 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
             phone_number = (search_phone.group(2))
         if email:
             # update Query
-            print(Fore.GREEN + str(todo_result[to_do_line][0]), ': Site registered -->', looking_for, 'Email:',
-                  email.group(2),
-                  person_name + ' ' + phone_number, end='\r')
+            print(Fore.GREEN + str(todo_result[to_do_line][0]), ': Site registered -->', looking_for,end='\r')
             return_update_query = "update %s set Status='Site registered',Email='%s'" \
                                   ",phone='%s',person='%s',lockedby=null ,Hostname='%s' where  No=%s " % \
                                   (selected_list, email.group(2), phone_number,
