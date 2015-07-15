@@ -72,8 +72,8 @@ def db_update(query):
 
 
 def monitoring(hostname, status, ip):
-    if ip=='None':
-        ip="'None'"
+    if ip == 'None':
+        ip = "'None'"
     query = "insert into  monitoring (hostname,status,PublicIP) " \
             "values ('%s','%s',%s)" % (hostname, status, str(ip.strip('[]')))
     db_update(query)
@@ -114,7 +114,7 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
             phone_number = (search_phone.group(2))
         if email:
             # update Query
-            print(Fore.GREEN + str(todo_result[to_do_line][0]), ': Site registered -->', looking_for,end='\r')
+            print(Fore.GREEN + str(todo_result[to_do_line][0]), ': Site registered -->', looking_for, end='\r')
             return_update_query = "update %s set Status='Site registered',Email='%s'" \
                                   ",phone='%s',person='%s',lockedby=null ,Hostname='%s' where  No=%s " % \
                                   (selected_list, email.group(2), phone_number,
@@ -127,7 +127,7 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
                 print(Fore.YELLOW + str(todo_result[to_do_line][0]), ': Unregistrable-->', look_for, end='\r')
                 return_update_query = "update %s set Status='Unregistrable',lockedby=null ,Hostname='%s' " \
                                       "where  No=%s " % (
-                                      selected_list, socket.gethostname(), todo_result[to_do_line][0])
+                                          selected_list, socket.gethostname(), todo_result[to_do_line][0])
                 db_update(return_update_query)
             else:
                 # update Query
@@ -136,7 +136,7 @@ def telnet_parser(telnet_result, todo_result, to_do_line, look_for, selected_lis
                       'Cannot retrieve email address!', end='\r')
                 return_update_query = "update %s set Status='Registered No Email',lockedby=null ,Hostname='%s' " \
                                       "where  No=%s " % (
-                                      selected_list, socket.gethostname(), todo_result[to_do_line][0])
+                                          selected_list, socket.gethostname(), todo_result[to_do_line][0])
                 db_update(return_update_query)
 
 
@@ -184,7 +184,6 @@ def main():
         except Exception:
             conn_id = None
             print('Try connecting to database...')
-            monitoring(socket.gethostname(), 'Try connecting to database', str(ip_address))
 
     table_list = "select table_name,table_rows from information_schema.tables " \
                  "where table_name like 'lst_%' and table_rows>0;"
@@ -235,11 +234,13 @@ def main():
 
                     for to_do_line in range(0, len(todo_result)):
 
-                        if process_counter > 0 and (process_counter / int(config_section_map("search")['mid_sleep_record'])) - (
-                                math.floor(process_counter / int(config_section_map("search")['mid_sleep_record']))) == 0:
+                        if process_counter > 0 and (
+                            process_counter / int(config_section_map("search")['mid_sleep_record'])) - (
+                                math.floor(
+                                        process_counter / int(config_section_map("search")['mid_sleep_record']))) == 0:
                             print(Fore.BLUE + 'Sleep mode:' + str(
                                 config_section_map("search")['mid_sleep_time']) + ' second {:%Y-%m-%d %H:%M:%S}'.format(
-                                datetime.datetime.now()),'Session Processed Count:',process_counter,end='\r')
+                                datetime.datetime.now()), 'Session Processed Count:', process_counter, end='\r')
                             monitoring(socket.gethostname(), 'Sleep Mode', str(ip_address))
                             sleep(int(config_section_map("search")['mid_sleep_time']))
                             monitoring(socket.gethostname(), 'Searching', str(ip_address))
@@ -259,7 +260,8 @@ def main():
                                 return_update_query = "update %s set Status='Passed',lockedby=null ,Hostname='%s' " \
                                                       "where  No=%s " \
                                                       % (
-                                                      selected_list, socket.gethostname(), todo_result[to_do_line][0])
+                                                          selected_list, socket.gethostname(),
+                                                          todo_result[to_do_line][0])
                                 db_update(return_update_query)
 
                             else:
