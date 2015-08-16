@@ -6,7 +6,7 @@ if __name__ == '__main__':
         ListSearch.main()
     else:
 
-        ch=input('Choice Action:\n1:Create List\n2:Search Existed List:\n3:Export List Result\n4:IPResolver\n0:Exit\n')
+        ch=input('Choice Action:\n1:Create List\n2:Search Existed List:\n3:Export List Result\n4:IP Resolver\n0:Exit\n')
         if ch == '1':
             import ListCreator
             ListCreator.main()
