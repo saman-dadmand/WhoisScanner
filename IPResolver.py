@@ -87,7 +87,7 @@ def main():
             conn_id = None
             print('Try connecting to database...')
 
-    if config_section_map("general")['reverse_dns_list']:
+    if config_section_map("ip_resolver")['default_list_name']:
         selected_list = str(config_section_map("ip_resolver")['default_list_name'])
         loop_counter = 1
         process_counter = 0
