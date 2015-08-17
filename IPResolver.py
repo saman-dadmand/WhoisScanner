@@ -95,8 +95,9 @@ def main():
             # lock record for process
             lock_record_query = 'update %s set lockedby=connection_id(),lockedat=now(),HFlag=\'I\' ' \
                                 'where lockedby is null and status=\'Site registered\' ' \
-                                'and (ip is null or ip=\'Fail\') order by ip limit %s '\
-                                % (selected_list, int(config_section_map("ip_resolver")['buffer']))
+                                'and (ip is null or ip=\'Fail\') and trycount<%s order by trycount limit %s '\
+                                % (selected_list,config_section_map("ip_resolver")['try_count'],
+                                    int(config_section_map("ip_resolver")['buffer']))
             loop_counter, connection_d = db_update(lock_record_query)
 
             if loop_counter:
@@ -111,16 +112,16 @@ def main():
                             look_for = todo_result[to_do_line][1]
                             looking_for = (str(look_for.strip()))
                             ip = host2ip('www.' + looking_for)
-                            print (looking_for+': '+ip)
+                            print(Fore.CYAN + looking_for+': '+ip)
                             return_update_query = "update %s set HFlag=\'R\',lockedby=null,ip='%s' " \
-                                                  "where  No=%s " \
+                                                  ",trycount=trycount+1 where  No=%s " \
                                                   % (selected_list,ip, todo_result[to_do_line][0])
                             db_update(return_update_query)
 
                         except Exception:
                             print('exception')
                             return_update_query = "update %s set HFlag=Null,lockedby=null " \
-                                                  "where  No=%s " \
+                                                  ",trycount=trycount+1 where  No=%s " \
                                                   % (selected_list, todo_result[to_do_line][0])
                             db_update(return_update_query)
                 else:
