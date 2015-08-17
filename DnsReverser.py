@@ -2,13 +2,11 @@ __author__ = 'Saman'
 from mysql.connector import MySQLConnection
 from config import read_db_config
 from config import config_section_map
-from colorama import Fore
+from colorama import Fore, Back, Style
 from colorama import init
 import datetime
 from time import sleep
-import socket
-
-from re import findall
+from Bing import reverse_dns
 
 init()
 
@@ -65,15 +63,6 @@ def db_update(query):
                     db_reconnect2_status = 0
 
 
-def host2ip(site):
-    try:
-        host = socket.gethostbyaddr(site)
-        ip = findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})', str(host[2]))
-        return ip[0]
-    except socket.error:
-        return 'Fail'
-
-
 def main():
     conn_id = None
     global conn
@@ -87,51 +76,37 @@ def main():
             conn_id = None
             print('Try connecting to database...')
 
-    if config_section_map("ip_resolver")['default_list_name']:
-        selected_list = str(config_section_map("ip_resolver")['default_list_name'])
+    if config_section_map("dns_reverser")['default_list_name']:
+        selected_list = str(config_section_map("dns_reverser")['default_list_name'])
         loop_counter = 1
         process_counter = 0
         while loop_counter > 0:
             # lock record for process
-            lock_record_query = 'update %s set lockedby=connection_id(),lockedat=now(),HFlag=\'I\' ' \
-                                'where lockedby is null and status=\'Site registered\' and HFlag<>\'R\' ' \
-                                'and (ip is null or ip=\'Fail\') and trycount<%s order by trycount limit %s '\
-                                % (selected_list,config_section_map("ip_resolver")['try_count'],
-                                    int(config_section_map("ip_resolver")['buffer']))
+            lock_record_query = 'update %s set lockedby=connection_id(),lockedat=now(),HFlag=\'D\' ' \
+                                'where lockedby is null and status=\'Site registered\' and HFlag=\'R\' ' \
+                                'and ip!=\'Fail\' and ip is not null limit %s' \
+                                % (selected_list, int(config_section_map("dns_reverser")['buffer']))
             loop_counter, connection_d = db_update(lock_record_query)
 
             if loop_counter:
-                todo_query = 'select no,site from %s where  lockedby=%s ' % (
+                todo_query = 'select distinct(ip) from %s where  lockedby=%s ' % (
                     selected_list, connection_d)
                 todo_result = db_select(todo_query)
                 if todo_result:
 
                     for to_do_line in range(0, len(todo_result)):
                         process_counter += 1
-                        try:
-                            look_for = todo_result[to_do_line][1]
-                            looking_for = (str(look_for.strip()))
-                            ip = host2ip('www.' + looking_for)
-                            print(Fore.CYAN + looking_for+': '+ip)
-                            if ip == 'Fail':
-                                return_update_query = "update %s set HFlag=\'I\',lockedby=null,ip='%s' " \
-                                                      ",trycount=trycount+1 where  No=%s " \
-                                                      % (selected_list, ip, todo_result[to_do_line][0])
-                            else:
-                                return_update_query = "update %s set HFlag=\'R\',lockedby=null,ip='%s' " \
-                                                      ",trycount=trycount+1 where  No=%s " \
-                                                      % (selected_list, ip, todo_result[to_do_line][0])
 
-                            db_update(return_update_query)
+                        look_for = todo_result[to_do_line][0]
+                        looking_for = (str(look_for.strip()))
 
-                        except Exception:
-                            print('exception')
-                            return_update_query = "update %s set HFlag=Null,lockedby=null " \
-                                                  ",trycount=trycount+1 where  No=%s " \
-                                                  % (selected_list, todo_result[to_do_line][0])
-                            db_update(return_update_query)
-                else:
-                    print('All record are processed for ' + selected_list + ' list!')
+                        reverse_result = reverse_dns(looking_for)
+                        for line in reverse_result:
+                            return_insert_query = "insert into  harverster_hosts (host,refrence) " \
+                                                  "values ('%s','%s')" \
+                                                  % ((reverse_result[line][0])[:100], todo_result[to_do_line][0])
+                            db_update(return_insert_query)
+
 
 if __name__ == '__main__':
     main()
