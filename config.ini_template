@@ -25,3 +25,13 @@ user = #smtp server user
 password = #smtp server password
 notify = #alert for blockout mail address
 sender= # smtp sender name
+[reverse_dns]
+buffer=10
+[ip_resolver]
+buffer=10
+default_list_name = lst_3l_ir
+try_count = 3
+[dns_reverser]
+buffer=10
+default_list_name = lst_3l_ir
+pages_to_process=20
