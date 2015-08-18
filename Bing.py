@@ -57,7 +57,9 @@ def reverse_dns(target):
 
                     for link in soup.find_all('a'):
                         pre_result = str(link.get('href'))
-                        if pre_result[:4] == 'http' and pre_result[:9] != 'http://go':
+                        if pre_result[:4] == 'http' and pre_result[:9] != 'http://go' \
+                                and pre_result[:34] != 'http://www.microsofttranslator.com' \
+                                and pre_result[:32] != 'https://view.officeapps.live.com':
                             result.setdefault(pre_result, []).append(pre_result)
                     page_number += 1
                 except Exception:
