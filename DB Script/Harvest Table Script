@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `harverster_hosts` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Host` varchar(100) DEFAULT NULL,
+  `Refrence` varchar(100) DEFAULT NULL,
+  `InsertDateTime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  KEY `id_refrence` (`Refrence`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

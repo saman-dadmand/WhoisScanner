@@ -95,11 +95,18 @@ def main():
                     looking_for = (str(look_for.strip()))
 
                     reverse_result = reverse_dns(looking_for)
-                    for line in reverse_result:
+                    if reverse_result is None:
                         return_insert_query = "insert into  harverster_hosts (host,refrence) " \
                                               "values ('%s','%s')" \
-                                              % ((reverse_result[line][0])[:100], todo_result[to_do_line][0])
+                                              % ('None', todo_result[to_do_line][0])
                         db_update(return_insert_query)
+
+                    else:
+                        for line in reverse_result:
+                            return_insert_query = "insert into  harverster_hosts (host,refrence) " \
+                                                  "values ('%s','%s')" \
+                                                  % ((reverse_result[line][0])[:100], todo_result[to_do_line][0])
+                            db_update(return_insert_query)
 
 
 if __name__ == '__main__':

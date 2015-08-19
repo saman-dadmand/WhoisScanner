@@ -39,6 +39,8 @@ def create_table(tbl_name_val):
             "lockedat datetime," \
             "Trycount int default 0 , " \
             "Hostname varchar(50)," \
+            "HFlag char(1) DEFAULT NULL," \
+            "IP varchar(15) DEFAULT NULL," \
             "PRIMARY KEY (No)" \
             ") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;" % tbl_name_val
     args = tbl_name_val
